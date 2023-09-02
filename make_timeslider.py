@@ -40,14 +40,15 @@ plugins.TimestampedGeoJson(
     period="PT2H",  # 2時間ごとにデータを表示
     duration="P7D",  # 1日間のデータを表示
     add_last_point=True,  # 最後のポイントを表示
-    auto_play=False,  # 自動再生しない
+    auto_play=True,  # 自動再生しない
     loop=False,  # ループしない
-    max_speed=64,  # 最大スピードを64倍に設定
-    loop_button=True,  # ループボタンの表示
+    max_speed=256,  # 最大スピードを64倍に設定
+    loop_button=False,  # ループボタンの表示
     date_options="YYYY-MM-DD HH:mm:ss",  # 日付の表示形式
     time_slider_drag_update=True,  # スライダーをドラッグしたときに地図を更新
-    speed_slider=False,  # スピードスライダーを表示
+    speed_slider=True,  # スピードスライダーを表示
 ).add_to(m)
+m.get_root().header.add_child(folium.Element("<title>週間時系列移動データビジュアライゼーション</title>"))
 
 
 # 地図を表示
