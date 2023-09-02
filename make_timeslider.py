@@ -46,6 +46,7 @@ plugins.TimestampedGeoJson(
     loop_button=True,  # ループボタンの表示
     date_options="YYYY-MM-DD HH:mm:ss",  # 日付の表示形式
     time_slider_drag_update=True,  # スライダーをドラッグしたときに地図を更新
+    speed_slider=False,  # スピードスライダーを表示
 ).add_to(m)
 
 
