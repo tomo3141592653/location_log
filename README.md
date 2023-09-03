@@ -9,7 +9,7 @@
 2014年から、iPhoneのGPSを利用して移動ログを記録してきた。
 - 2014年から2018年まで: **Moves**という移動ログアプリ  
 - サービス終了後は**Google Maps**を利用
-- データ活用の動機: [**Breath of the Wild**の足跡機能](https://gamewith.jp/zeldabotw/article/show/263206)を参考に自身の移動を可視化したい
+- データ活用の動機: [**Breath of the Wild**の足跡機能](https://www.youtube.com/watch?v=xYV_OyFK4dA)を参考に自身の移動を可視化したい
 
 ## 成果物
 
