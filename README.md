@@ -2,8 +2,7 @@
 **行動ログの可視化**
 
 **作成者**: 平田朋義  
-**作成目的**: [2023年夏の自由研究発表会](https://sites.google.com/site/hiratatomogi/Home/announce/2023%E5%B9%B4%E5%A4%8F%E4%BC%91%E3%81%BF%E8%87%AA%E7%94%B1%E7%A0%94%E7%A9%B6%E7%99%BA%E8%A1%A8%E4%BC%9A)
-
+**作成目的**: [2023年夏の自由研究発表会](https://sites.google.com/site/hiratatomogi/Home/announce/2023%E5%B9%B4%E5%A4%8F%E4%BC%91%E3%81%BF%E8%87%AA%E7%94%B1%E7%A0%94%E7%A9%B6%E7%99%BA%E8%A1%A8%E4%BC%9A) ([タイムテーブル](https://docs.google.com/spreadsheets/d/1tVaOFhkYea3fmj-zTFi5GJJhflR5LrzZVlt1TQThTJg/edit#gid=0))
 ## 動機
 
 2014年から、iPhoneのGPSを利用して移動ログを記録してきた。
