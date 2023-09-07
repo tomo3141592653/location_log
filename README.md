@@ -49,6 +49,87 @@
 - [データ処理](https://chat.openai.com/share/298c69cd-bc45-4b79-b6ed-46bb71cee837)
 - [アニメーションの作成](https://chat.openai.com/share/50db1571-034b-46fb-a0da-03f8761cecce)
 - [サイト作成](https://chat.openai.com/share/0e1e6012-ed10-4dbe-9e86-7357ef2a1403)
+
+## 技術的解説
+簡単に地図を作れるpythonのパッケージfoliumを使用している。  
+
+行った場所をドットで表示する処理
+```python
+import folium
+
+# データの読み込み
+data = pd.read_csv("data.csv")
+
+# タイムスタンプの列をdatetime型に変換
+data["timestamp"] = pd.to_datetime(data["datetime"])
+
+# 地図の生成
+m = folium.Map(location=[35.6895, 139.6917], zoom_start=12)
+# 訪れた場所の周囲をハイライトするためのマーカーを追加
+for _, row in data.iterrows():
+    folium.CircleMarker(
+        location=(row['latitude'], row['longitude']),
+        radius=4,
+        color='blue',
+        fill=True,
+        fill_opacity=0.6
+    ).add_to(m)
+
+# 地図をHTMLファイルとして保存
+m.save("dot_map.html")
+```
+
+移動をアニメーションでする処理
+```python
+import folium
+
+# データの読み込み
+data = pd.read_csv("timeline_resample.csv")
+
+# タイムスタンプの列をdatetime型に変換
+data["timestamp"] = pd.to_datetime(data["datetime"])
+
+# 地図の生成
+m = folium.Map(location=[35.6895, 139.6917], zoom_start=12)
+
+
+# ピンを線でつなぐためのGeoJSON形式のデータを生成
+geojson_features_line = [
+    {
+        "type": "Feature",
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [lon, lat] for lat, lon in zip(data["latitude"], data["longitude"])
+            ],
+        },
+        "properties": {
+            "times": data["timestamp"].astype(str).tolist(),
+            "popup": [str(ts) for ts in data["timestamp"]],
+            "id": "line",
+        },
+    }
+]
+
+# タイムスタンプ付きのGeoJSONを追加（線の表示）
+plugins.TimestampedGeoJson(
+    {"type": "FeatureCollection", "features": geojson_features_line},
+    period="PT2H",  # 2時間ごとにデータを表示
+    duration="P7D",  # 1日間のデータを表示
+    add_last_point=True,  # 最後のポイントを表示
+    auto_play=True,  # 自動再生しない
+    loop=False,  # ループしない
+    max_speed=256,  # 最大スピードを64倍に設定
+    loop_button=False,  # ループボタンの表示
+    date_options="YYYY-MM-DD HH:mm:ss",  # 日付の表示形式
+    time_slider_drag_update=True,  # スライダーをドラッグしたときに地図を更新
+    speed_slider=True,  # スピードスライダーを表示
+).add_to(m)
+
+# 地図をhtmlで保存
+m.save("timeline.html")
+```
+
 ## 移動ログの感想
 
 - この10年で福井県には訪れていないことに気付いた
@@ -65,3 +146,6 @@
 
 - 2014年以前のログデータは入手は不可能か？
 - ログを自動更新するには？
+## Issues
+- google mapのlog入れたら自動でできるようにしたい。
+- 現時点で大量データをgitで管理してしまっているが、データは外部で管理したい。
