@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>移動ログタイムライン(2014年3月~2023年8月)</title>
+    
+    <!-- スタイルシート -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.css">
+    
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+        .leaflet-container {
+            font-size: 1rem;
+        }
+        .leaflet-control-timecontrol {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .timecontrol-date {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .timecontrol-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .timecontrol-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .timecontrol-button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .timecontrol-button:hover {
+            background: #0056b3;
+        }
+        .timecontrol-speed {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .timecontrol-speed-label {
+            font-weight: bold;
+            min-width: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <!-- スクリプト -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.min.js"></script>
+
+    <script>
+        // 地図の初期化
+        const map = L.map('map', {
+            center: [35.6895, 139.6917],
+            zoom: 12,
+            zoomControl: true,
+            preferCanvas: true
+        });
+
+        // タイルレイヤーの追加
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Data by &copy; <a target="_blank" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_blank" href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+            maxZoom: 18,
+            subdomains: 'abc'
+        }).addTo(map);
+
+        // タイムディメンションの設定
+        map.timeDimension = L.timeDimension({
+            period: "PT2H",
+            timeInterval: "2014-03-01/2023-08-31",
+            currentTime: new Date("2014-03-01")
+        });
+
+        // カスタムタイムディメンションコントロール
+        L.Control.TimeDimensionCustom = L.Control.TimeDimension.extend({
+            _getDisplayDateFormat: function(date) {
+                return moment(date).format("YYYY-MM-DD HH:mm:ss");
+            }
+        });
+
+        const timeDimensionControl = new L.Control.TimeDimensionCustom({
+            autoPlay: true,
+            loopButton: false,
+            maxSpeed: 256,
+            minSpeed: 0.1,
+            playerOptions: {
+                loop: false,
+                startOver: true,
+                transitionTime: 200
+            },
+            position: "bottomleft",
+            speedSlider: true,
+            timeSliderDragUpdate: true
+        });
+
+        map.addControl(timeDimensionControl);
+
+        // マーカーオプションの設定
+        const markerOptions = {
+            color: 'blue',
+            fill: true,
+            fillColor: 'blue',
+            fillOpacity: 0.6,
+            radius: 2,
+            weight: 3
+        };
+
+        let timelineData = [];
+        let pathLine;
+
+        // タイムラインデータの読み込み
+        async function loadTimelineData() {
+            try {
+                const response = await fetch('timeline_data.json');
+                if (!response.ok) throw new Error('データの読み込みに失敗しました');
+                
+                timelineData = await response.json();
+                
+                // GeoJSONレイヤーの作成
+                const geoJsonLayer = L.geoJson({
+                    type: "FeatureCollection",
+                    features: [{
+                        type: "Feature",
+                        geometry: {
+                            type: "LineString",
+                            coordinates: timelineData.map(point => [point.lng, point.lat])
+                        },
+                        properties: {
+                            times: timelineData.map(point => point.timestamp)
+                        }
+                    }]
+                }, {
+                    pointToLayer: function(feature, latLng) {
+                        return L.circleMarker(latLng, markerOptions);
+                    }
+                });
+
+                // タイムディメンションレイヤーの作成
+                const timeDimensionLayer = L.timeDimension.layer.geoJson(geoJsonLayer, {
+                    updateTimeDimension: true,
+                    addlastPoint: true,
+                    duration: "P7D"
+                }).addTo(map);
+
+            } catch (error) {
+                console.error('エラーが発生しました:', error);
+                alert('タイムラインデータの読み込みに失敗しました。');
+            }
+        }
+
+        // データの読み込みを開始
+        loadTimelineData();
+    </script>
+</body>
+</html> 

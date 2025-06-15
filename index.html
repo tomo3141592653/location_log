@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 
 <head>
-
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>移動ログビジュアライゼーション(2014年3月~2023年8月)</title>
-    <script>
-        L_NO_TOUCH = false;
-        L_DISABLE_3D = false;
-    </script>
-
+    
+    <!-- スタイルシート -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css">
+    
     <style>
-        html,
-        body {
+        html, body {
             width: 100%;
             height: 100%;
             margin: 0;
             padding: 0;
         }
-    </style>
-    <style>
         #map {
             position: absolute;
             top: 0;
@@ -27,110 +29,86 @@
             right: 0;
             left: 0;
         }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css" />
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
-
-
-
-    <meta name="viewport" content="width=device-width,
-                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <style>
-        #map_0a3eb4a5cb0e632114d562eb8f62813c {
-            position: relative;
-            width: 100.0%;
-            height: 100.0%;
-            left: 0.0%;
-            top: 0.0%;
-        }
-
         .leaflet-container {
             font-size: 1rem;
         }
     </style>
-
 </head>
 
 <body>
+    <div id="map"></div>
 
+    <!-- スクリプト -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 
-    <div class="folium-map" id="map_0a3eb4a5cb0e632114d562eb8f62813c"></div>
-
-</body>
-<script>
-
-
-    var map_0a3eb4a5cb0e632114d562eb8f62813c = L.map(
-        "map_0a3eb4a5cb0e632114d562eb8f62813c",
-        {
+    <script>
+        // 地図の初期化
+        const map = L.map('map', {
             center: [35.6895, 139.6917],
-            crs: L.CRS.EPSG3857,
             zoom: 12,
             zoomControl: true,
-            preferCanvas: true,
-        }
-    );
+            preferCanvas: true
+        });
 
-    L.Control.geocoder().addTo(map_0a3eb4a5cb0e632114d562eb8f62813c);
+        // タイルレイヤーの追加
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Data by &copy; <a target="_blank" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_blank" href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+            maxZoom: 18,
+            subdomains: 'abc'
+        }).addTo(map);
 
+        // マーカーオプションの設定
+        const markerOptions = {
+            color: 'blue',
+            fill: true,
+            fillColor: 'blue',
+            fillOpacity: 0.6,
+            radius: 2,
+            weight: 3
+        };
 
+        // 位置情報の読み込みと表示
+        async function loadAndDisplayLocations() {
+            try {
+                const response = await fetch('timeline_data.json');
+                if (!response.ok) throw new Error('データの読み込みに失敗しました');
+                
+                const data = await response.json();
+                const locations = data.map(point => [point.lat, point.lng]);
 
-
-    var tile_layer_4e46e92ff53ceeeba27e29db0a1365e1 = L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        { "attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false }
-    ).addTo(map_0a3eb4a5cb0e632114d562eb8f62813c);
-
-
-
-    var markerOptions = {
-        "bubblingMouseEvents": true,
-        "color": "blue",
-        "fill": true,
-        "fillColor": "blue",
-        "fillOpacity": 0.6,
-        "fillRule": "evenodd",
-        "lineCap": "round",
-        "lineJoin": "round",
-        "opacity": 1.0,
-        "radius": 2,
-        "stroke": true,
-        "weight": 3
-    };
-
-
-    // Google DriveからJSONデータを非同期に読み込む
-    fetch('https://tomo3141592653.github.io/location_log/unique_location.json')
-        .then(response => response.json())
-        .then(locations => {
-            // 読み込んだデータを使用して、地図上にマーカーを配置
-            for (var i = 0; i < locations.length; i++) {
-                L.circleMarker(locations[i], markerOptions).addTo(map_0a3eb4a5cb0e632114d562eb8f62813c);
+                const markers = locations.map(location => 
+                    L.circleMarker(location, markerOptions).addTo(map)
+                );
+                
+                // すべてのマーカーを含む境界を自動調整
+                if (markers.length > 0) {
+                    const group = new L.featureGroup(markers);
+                    map.fitBounds(group.getBounds());
+                }
+            } catch (error) {
+                console.error('エラーが発生しました:', error);
+                alert('位置情報データの読み込みに失敗しました。');
             }
-        })
-        .catch(error => console.error('Error:', error));
-    L.control.locate({
-        position: 'bottomleft',
-        setView: 'untilPanOrZoom',
-        keepCurrentZoomLevel: false,
-        maxZoom: 7 // ズームレベルを13に設定
-    }).addTo(map_0a3eb4a5cb0e632114d562eb8f62813c);
+        }
 
-</script>
+        // 位置情報コントロールの追加
+        L.control.locate({
+            position: 'bottomleft',
+            setView: 'untilPanOrZoom',
+            keepCurrentZoomLevel: false,
+            maxZoom: 7
+        }).addTo(map);
 
+        // ジオコーダーの追加
+        L.Control.geocoder().addTo(map);
+
+        // データの読み込みを開始
+        loadAndDisplayLocations();
+    </script>
+</body>
 </html>
